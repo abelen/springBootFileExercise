@@ -2,7 +2,6 @@ package main;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -24,24 +23,31 @@ public class FileStorageService {
      * @return the filename
      */
     public String uploadFile(final MultipartFile file) {
-        String fileName = StringUtils.cleanPath(file.getName());
-
         try {
 
             // create the file.
-            final UploadFileEntity uploadFileEntity = UploadFileEntity.builder()
+            final FileEntity fileEntity = FileEntity.builder()
                     .data(file.getBytes())
-                    .fileName(fileName)
+                    .fileName(file.getOriginalFilename())
                     .size(file.getSize())
                     .fileType(file.getContentType())
                     .build();
 
-            fileRepository.save(uploadFileEntity);
+            fileRepository.save(fileEntity);
         } catch (Exception ex) {
 
         }
-        return fileName;
+        return file.getOriginalFilename();
     }
 
+    /**
+     * Gets the file if it exists.
+     *
+     * @param fileName the filename.
+     * @return
+     */
+    public FileEntity getFileMetadata(final String fileName) {
+        return fileRepository.findByFileName(fileName);
+    }
 
 }

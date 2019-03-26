@@ -8,9 +8,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  * The Application that starts up the Spring Boot container.
  */
 @SpringBootApplication
-@EnableConfigurationProperties({
-        FileStorageProperties.class
-})
 public class Application {
 
     /**

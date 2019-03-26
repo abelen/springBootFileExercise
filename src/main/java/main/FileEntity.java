@@ -1,8 +1,10 @@
 package main;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,10 +12,16 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+/**
+ * The File Entity that stored in the database.
+ */
+@Getter
 @Entity
 @Table(name = "file")
 @Builder
-public class UploadFileEntity {
+@AllArgsConstructor
+@NoArgsConstructor
+public class FileEntity {
 
     /**
      * The file id.
@@ -26,7 +34,6 @@ public class UploadFileEntity {
      * The filename.
      */
     private String fileName;
-
 
     /**
      * The file type.
@@ -44,6 +51,4 @@ public class UploadFileEntity {
      */
     @Lob
     private byte[] data;
-
-
 }

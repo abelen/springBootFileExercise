@@ -5,5 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * The File Repository.
  */
-public interface FileRepository extends CrudRepository<UploadFileEntity, Integer> {
+public interface FileRepository extends CrudRepository<FileEntity, Integer> {
+
+    FileEntity findByFileName(final String fileName);
 }

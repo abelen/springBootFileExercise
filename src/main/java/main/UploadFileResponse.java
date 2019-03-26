@@ -1,5 +1,6 @@
 package main;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.NonNull;
  * The canonical upload file response to be returned out to client.
  */
 @Getter
-@Setter
+@Builder
 @AllArgsConstructor
 public class UploadFileResponse {
 
