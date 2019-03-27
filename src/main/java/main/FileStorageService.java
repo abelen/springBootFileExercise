@@ -1,12 +1,16 @@
 package main;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 /**
  * The File Storage Service.
  */
+@Slf4j
 @Service
 public class FileStorageService {
 
@@ -22,7 +26,7 @@ public class FileStorageService {
      * @param file the file to be uploaded
      * @return the filename
      */
-    public String uploadFile(final MultipartFile file) {
+    public String uploadFile(final MultipartFile file) throws IOException {
         try {
 
             // create the file.
@@ -34,8 +38,9 @@ public class FileStorageService {
                     .build();
 
             fileRepository.save(fileEntity);
-        } catch (Exception ex) {
-
+        } catch (IOException ex) {
+            log.error("Exception occurred when uploading file: {}", ex.getStackTrace());
+            throw ex;
         }
         return file.getOriginalFilename();
     }
@@ -46,8 +51,7 @@ public class FileStorageService {
      * @param fileName the filename.
      * @return
      */
-    public FileEntity getFileMetadata(final String fileName) {
+    public FileEntity getFile(final String fileName) {
         return fileRepository.findByFileName(fileName);
     }
-
 }

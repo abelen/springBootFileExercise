@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 /**
- * The File upload endpoints.
+ * The File endpoints.
  */
 @RestController
-public class FileUploadController {
+public class FileController {
 
     /**
      * The {@link FileStorageService}
@@ -27,12 +29,14 @@ public class FileUploadController {
      * @return the {@link UploadFileResponse}
      */
     @PostMapping("/files")
-    public UploadFileResponse uploadFile(@RequestParam("file") final MultipartFile file) {
+    public UploadFileResponse uploadFile(@RequestParam("file") final MultipartFile file) throws IOException {
         final String fileName = fileStorageService.uploadFile(file);
 
-        return new UploadFileResponse(fileName,
-                file.getContentType(),
-                file.getSize());
+        return UploadFileResponse.builder()
+                .fileName(fileName)
+                .fileType(file.getContentType())
+                .size(file.getSize())
+                .build();
     }
 
     /**
@@ -43,7 +47,7 @@ public class FileUploadController {
      */
     @GetMapping("/files/{fileName}")
     public UploadFileResponse getFileMetadata(@PathVariable(name = "fileName") final String fileName) {
-        final FileEntity fileEntity = fileStorageService.getFileMetadata(fileName);
+        final FileEntity fileEntity = fileStorageService.getFile(fileName);
         return UploadFileResponse.builder()
                 .fileName(fileEntity.getFileName())
                 .fileType(fileEntity.getFileType())

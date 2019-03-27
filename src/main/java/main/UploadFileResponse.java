@@ -31,5 +31,4 @@ public class UploadFileResponse {
      */
     @NonNull
     private Long size;
-
 }

@@ -33,11 +33,13 @@ public class FileEntity {
     /**
      * The filename.
      */
+    @NonNull
     private String fileName;
 
     /**
      * The file type.
      */
+    @NonNull
     private String fileType;
 
     /**
