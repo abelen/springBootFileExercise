@@ -15,6 +15,11 @@ import lombok.NonNull;
 public class UploadFileResponse {
 
     /**
+     * The file id.
+     */
+    private Long fileId;
+
+    /**
      * The filename.
      */
     @NonNull

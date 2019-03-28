@@ -66,12 +66,12 @@ public class FileControllerTest {
          */
         private TestContext() throws IOException {
             MockitoAnnotations.initMocks(this);
-            Mockito.when(fileStorageService.uploadFile(Mockito.any(MultipartFile.class))).thenReturn("test.doc");
+            Mockito.when(fileStorageService.uploadFile(Mockito.any(MultipartFile.class))).thenReturn(buildFileEntity());
             Mockito.when(multipartFile.getContentType()).thenReturn("application/msword");
             Mockito.when(multipartFile.getOriginalFilename()).thenReturn("test.doc");
             Mockito.when(multipartFile.getSize()).thenReturn(12345L);
             Mockito.when(multipartFile.getBytes()).thenReturn(new byte[10]);
-            Mockito.when(fileStorageService.getFile(Mockito.eq("test.doc"))).thenReturn(buildFileEntity());
+//            Mockito.when(fileStorageService.getFile(Mockito.eq("test.doc"))).thenReturn(buildFileEntity());
         }
 
         /**
