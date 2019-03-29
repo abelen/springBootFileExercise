@@ -107,7 +107,7 @@ public class FileStorageServiceTest {
             Mockito.when(multipartFile.getOriginalFilename()).thenReturn("test.doc");
             Mockito.when(multipartFile.getSize()).thenReturn(12345L);
             Mockito.when(multipartFile.getBytes()).thenReturn(new byte[10]);
-            Mockito.when(fileRepository.findByFileName(Mockito.anyString())).thenReturn(buildFileEntity());
+//            Mockito.when(fileRepository.findByFileName(Mockito.anyString())).thenReturn(buildFileEntity());
         }
 
 

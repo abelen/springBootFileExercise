@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,19 +58,34 @@ public class FileController {
      * @return the file metadata
      */
     @RequestMapping(value = "/fileMetadata/{fileName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UploadFileResponse getFileMetadata(@PathVariable(name = "fileName") final String fileName) {
-        return uploadFileResponseTransformer.toUploadFileResponse(fileStorageService.getFile(fileName));
+    public ResponseEntity<UploadFileResponse> getFileMetadataForFile(@PathVariable(name = "fileName") final String fileName) {
+
+        final FileEntity fileEntity = fileStorageService.getFile(fileName);
+
+        if (fileEntity == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        final UploadFileResponse uploadFileResponse = uploadFileResponseTransformer.toUploadFileResponse(fileEntity);
+        return ResponseEntity.ok()
+                .body(uploadFileResponse);
     }
 
     /**
      * Gets the file metadata for files.
      *
-     * @return the file metadata
+     * @return the list of file metadata
      */
     @RequestMapping(value = "/fileMetadata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UploadFileResponse> getFileMetadataForAll() {
+    public List<UploadFileResponse> getFileMetadataForMultipleFile(@RequestParam(name = "fileType", required = false) final String fileType) {
+        final List<FileEntity> fileEntities;
+        if (fileType == null) {
+             fileEntities = fileStorageService.getAllFiles();
+        } else {
+            fileEntities = fileStorageService.getFileByFileType(fileType);
+        }
+
         final List<UploadFileResponse> uploadFileResponses = new ArrayList<>();
-        final List<FileEntity> fileEntities = fileStorageService.getAllFiles();
         for (final FileEntity fileEntity : fileEntities) {
             uploadFileResponses.add(uploadFileResponseTransformer.toUploadFileResponse(fileEntity));
         }
@@ -86,7 +102,13 @@ public class FileController {
     @GetMapping("/files/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable(name="fileId")final Long fileId,
                                                  final HttpServletRequest request) {
-        final FileEntity fileEntity = fileStorageService.getFile(fileId);
+        final FileEntity fileEntity;
+        try {
+            fileEntity = fileStorageService.getFile(fileId);
+        } catch (FileNotFoundException ex) {
+            // return 404
+            return ResponseEntity.notFound().build();
+        }
 
         final String contentType = Optional.ofNullable(fileEntity.getFileType()).orElse("application/octet-stream");
 

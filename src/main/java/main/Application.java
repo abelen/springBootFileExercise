@@ -3,10 +3,12 @@ package main;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * The Application that starts up the Spring Boot container.
  */
+@EnableScheduling
 @SpringBootApplication
 public class Application {
 
