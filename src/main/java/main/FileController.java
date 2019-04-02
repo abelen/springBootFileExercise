@@ -1,10 +1,12 @@
 package main;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class FileController {
     @Autowired
     private UploadFileResponseTransformer uploadFileResponseTransformer;
 
+
     /**
      * Uploads the given file.
      *
@@ -48,7 +50,8 @@ public class FileController {
      */
     @PostMapping("/files")
     public UploadFileResponse uploadFile(@RequestParam("file") final MultipartFile file) throws IOException {
-        return uploadFileResponseTransformer.toUploadFileResponse(fileStorageService.uploadFile(file));
+        final UploadFileResponse uploadFileResponse = uploadFileResponseTransformer.toUploadFileResponse(fileStorageService.uploadFile(file));
+        return uploadFileResponse;
     }
 
     /**

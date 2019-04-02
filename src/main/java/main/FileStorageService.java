@@ -2,7 +2,8 @@ package main;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
+import org.springframework.context.ApplicationContext;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,12 @@ public class FileStorageService {
      */
     @Autowired
     private FileRepository fileRepository;
+
+    /**
+     * The current {@link ApplicationContext}.
+     */
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * Uploads the given file to the database.
@@ -53,6 +60,7 @@ public class FileStorageService {
             fileRepository.save(fileEntity);
             log.info("File {} persisted.", file.getOriginalFilename());
 
+            sendMessageToQueue(fileEntity);
             return fileEntity;
         } catch (IOException ex) {
             log.error("Exception occurred when uploading file: {}", ex.getStackTrace());
@@ -98,5 +106,23 @@ public class FileStorageService {
      */
     public List<FileEntity> getFileByFileType(final String fileType) {
         return StreamSupport.stream(fileRepository.findByFileType(fileType).spliterator(), false).collect(Collectors.toList());
+    }
+
+    /**
+     * Sends the message over to the queue.
+     *
+     * @param fileEntity the {@link FileEntity} persisted
+     */
+    private void sendMessageToQueue(final FileEntity fileEntity) {
+        final JmsTemplate jmsTemplate = applicationContext.getBean(JmsTemplate.class);
+        jmsTemplate.setReceiveTimeout(2000);
+
+        log.info("Message for fileName: {} sent to mailQueue.", fileEntity.getFileName());
+        // sends the out to the queue to be polled
+        jmsTemplate.convertAndSend("mailQueue", Email.builder()
+                .fileName(fileEntity.getFileName())
+                .fileType(fileEntity.getFileType())
+                .size(fileEntity.getSize())
+                .build());
     }
 }

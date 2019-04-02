@@ -24,3 +24,5 @@ To return file metadata for a given filename:
 
 To return file metadata for all the files in the DB:
 `http://localhost:8080/fileMetadata`
+
+TODO: To expand this project to utilize the AWS Cloud. 
